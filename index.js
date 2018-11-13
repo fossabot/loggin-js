@@ -4,10 +4,11 @@ const {
   FileLogger,
   RemoteLogger,
   ConsoleLogger,
-  LoggerPack
+  LoggerPack,
+  MemoryLogger
 } = require('./lib/loggers');
 const Notifiers = require('./lib/notifiers');
-const { Formatter } = require('./lib/formaters');
+const { Formatter } = require('./lib/formatters');
 const Severity = require('./lib/severity');
 const Log = require('./lib/log');
 
@@ -19,7 +20,7 @@ let defaultOpts = {
 process.env.DEBUG = false;
 
 /**
- * @function
+ * @function getLogger
  * @param {Object} options
  * @param {number} options.level?
  * @param {number} options.port?
@@ -68,11 +69,12 @@ function join(loggers, options = {}) {
   return new LoggerPack(options, loggers);
 }
 
-module.exports = {
+const loggin = {
   Loggers: {
     ConsoleLogger,
     FileLogger,
     RemoteLogger,
+    MemoryLogger,
     Logger
   },
   Severity,
@@ -82,3 +84,5 @@ module.exports = {
   join,
   Formatter
 };
+
+module.exports = loggin;

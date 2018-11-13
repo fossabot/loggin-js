@@ -17,7 +17,8 @@ const logger = logging.getLogger({
   // lineNumbers: true,
 
   // A label to identify this logger instance, default to filename if omitted
-  channel: 'basic-example.js'
+  channel: 'basic-example.js',
+  formatter: 'medium'
 });
 
 // Does the same as passing into settings
@@ -29,17 +30,18 @@ logger.setUser('root');
 
 // Available predefined log levels
 logger.info('info', {
-  user: 'pedro',
-  id: 10
+  user: 'Jeffrey',
+  id: 101
 });
-logger.error('error');
-logger.warning('warning');
-logger.alert('alert');
-logger.emergency('emergency');
-logger.critical('critical');
-logger.debug('debug');
-logger.notice(['notice', 'notice']);
-logger.error('There was an <%rERROR>'); 
+logger.error('Teaching a snake to kick! :D');
+logger.warning('Whats that');
+logger.alert('Rice done.');
+logger.debug('Wow I can log stuff');
+logger.emergency('Lemons');
+logger.critical('critical', { error: 'S*** something is bad!' });
+logger.setUser('keff');
+logger.notice('notice im now an other user');
+logger.error('There was an <%rERROR>');
 
 // If enabled set to false logs will not be output
 logger.setEnabled(false);

@@ -1,21 +1,25 @@
 # Loggin' JS
-A logger similar to the [one used in python](https://docs.python.org/2/library/logging.html) for NodeJS.
 
-> Based on standard RFC3164
+![Preview](https://github.com/nombrekeff/loggin-js/blob/master/examples/example-output-formater.PNG?raw=true)
 
-[![npm version](https://badge.fury.io/js/loggin-js.svg)](https://badge.fury.io/js/loggin-js) [![npm](https://img.shields.io/npm/dm/loggin-js.svg?colorB=blue)](https://www.npmjs.com/package/loggin-js)
-
-[![CircleCI](https://img.shields.io/circleci/project/github/nombrekeff/loggin-js.svg)](https://www.npmjs.com/package/loggin-js)
-[![David](https://img.shields.io/david/nombrekeff/loggin-js.svg)](https://david-dm.org/nombrekeff/loggin-js?view=tree)
+[![Build Status](https://semaphoreci.com/api/v1/nombrekeff/loggin-js/branches/master/shields_badge.svg)](https://semaphoreci.com/nombrekeff/loggin-js)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2ffe3b2f71c74210987436b935c06720)](https://www.codacy.com/app/manoloedge96/loggin-js?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nombrekeff/loggin-js&amp;utm_campaign=Badge_Grade)
+[![npm](https://img.shields.io/npm/dt/loggin-js.svg)](https://www.npmjs.com/package/loggin-js)
+[![David](https://img.shields.io/david/nombrekeff/loggin-js.svg)](https://david-dm.org/nombrekeff/loggin-js?view=tree)  
+
+[![NPM](https://nodei.co/npm/loggin-js.png)](https://nodei.co/npm/loggin-js/)
+[![Twitter Follow](https://img.shields.io/twitter/follow/keff39006469.svg?style=social&label=Follow)](https://twitter.com/intent/user?screen_name=keff39006469)  
+
+
+A little customizable logger for NodeJS.  
+Log to the **console**, to a **file**, to a **remote service** or create a custom one.
+> Based on standard **RFC3164**
 
 ### References
 * [Get started](https://github.com/nombrekeff/logging-js/wiki/Get-Started)
 * [Basic Usage](https://github.com/nombrekeff/logging-js/wiki/Basic-Usage)
-* [Loggers](https://github.com/nombrekeff/logging-js/wiki/Logger)
-* [Notifiers](https://github.com/nombrekeff/logging-js/wiki/Notifier)
-* [Severity](https://github.com/nombrekeff/logging-js/wiki/Severity)
-* [Examples](https://github.com/nombrekeff/logging-js/wiki/Examples)
+* [Wiki](https://nombrekeff.github.io/loggin-js/)
+* [Examples](/examples)
 * [Collaborating](#Collaborating)
 
 
@@ -31,7 +35,7 @@ node run examples/basic-example.js
 ```
 
 * Using in node
-```js
+```javascript
 // Require the logging library
 const logging = require('loggin-js');
 ```
@@ -44,7 +48,7 @@ This means it will output any log to the console as DEBUG englobes all other sev
 We create it making use of the `logging.getLogger(options?)` method that creates a logger based on the options.  
 _There are other ways of creating a Logger as described in the examples and docs_
 
-```js
+```javascript
 // Require the logging library
 const logging = require('loggin-js');
 
@@ -54,13 +58,21 @@ const { Severity } = logging;
 // Get a logger with DEBUG severity. 
 // Severity DEBUG will output any severity.
 const logger = logging.getLogger({
-  level: Severity.DEBUG,
-  color: true
+  
+  // level can be a <string> = 'DEBUG' a <int> = 7 or a <Severity> = Severity.DEBUG 
+  level: 'DEBUG',
+
+  // If output should be colored
+  color: true,
+
+  // Set formatter to medium - one of: ['short', 'medium', 'long']
+  formatter: 'medium',
 });
 
 // Does the same as passing into settings, as done above
 logger.setLevel(Severity.DEBUG);
 logger.setColor(true);
+logger.setFormatter('medium');
 
 
 // Available predefined log levels
@@ -71,7 +83,7 @@ logger.alert('alert');
 logger.emergency('emergency');
 logger.critical('critical');
 logger.debug('debug');
-logger.notice(['notice', 'notice']);
+logger.notice('Notice', {}, 'channel');
 
 
 // If enabled set to false logs will not be output
@@ -83,7 +95,7 @@ logger.setEnabled(false);
 Log to files instead of the console
 
 We create it making use of the `FileLogger` class.  
-```js
+```javascript
 // Require the logging library
 const logging = require('loggin-js');
 
@@ -98,8 +110,10 @@ const logger = new Loggers.FileLogger({
 
   // You can pass a pipes array to the file logger or you can do after instancing (showed below)
   pipes: [
+
     // Here we create a pipe that will pipe level ERROR logs to the file 'logs/error-logs.log'
     new Notifiers.Pipe(Severity.ERROR, 'logs/error-logs.log'),
+
     // This one will pipe level INFO logs to the file 'logs/info-logs.log'
     new Notifiers.Pipe(Severity.INFO, 'logs/info-logs.log')
   ]
@@ -124,28 +138,27 @@ logger.alert('Logging a error log');
 
 ##### Custom Formatter Example
 Custom formatter, customize the output of the log 
-```js
+```javascript
 const logging = require('loggin-js');
 const logger = logging.getLogger({
   level: logging.Severity.DEBUG,
   color: true,
 
   /**
-   * You can also use a custom formater if the default one does not satisfy your needs.
-   * In the formater you can access all log properties and you can also set the 
+   * You can also use a custom formatter if the default one does not satisfy your needs.
+   * In the formatter you can access all log properties and you can also set the 
    * color of some segments of the log by using <%L> where L is one of:
    *  - r red
    *  - g green
+   *  - gr gray
    *  - b blue
    *  - p pink
    *  - y yellow
    *  - c cyan
    *  - m magenta
    *  - (nnn) a number between 0-255 # not implemented yet
-   *
-   * If you use %b lets say it will color until the breakpoint: [-,_|]  
    */
-  formater: '[{time.toLocaleString}] - <%m{user}> | {severityStr} | {message} - {JSON.stringify(data)}'
+  formatter: '[{time.toLocaleString}] - <%m{user}> | {severityStr} | {message} - {JSON.stringify(data)}'
 });
 
 // Set user to root
